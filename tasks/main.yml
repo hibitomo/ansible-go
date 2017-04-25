@@ -3,7 +3,7 @@
   shell: wget "{{ go_download_location }}"
   args:
     chdir: /usr/local/src/
-  enviroment: "{{ proxy_env }}"
+  environment: "{{ proxy_env }}"
   become: yes
 
 - name: Register the current Go version (if any)
