@@ -1,8 +1,10 @@
 ---
+
 - name: Download the Go tarball
   shell: wget "{{ go_download_location }}"
   args:
     chdir: /usr/local/src/
+    creates: /usr/local/src/{{ go_tarball }}
   environment: "{{ proxy_env }}"
   become: yes
 
@@ -38,4 +40,13 @@
     src: go-path.sh
     dest: /etc/profile.d
   when: set_go_path
+  become: yes
+
+- name: Add the Go bin directory to the sudoers secure_path.
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "secure_path="
+    insertafter: EOF
+    line: 'Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:/usr/local/go/bin"'
   become: yes
