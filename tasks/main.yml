@@ -30,14 +30,14 @@
   when: go_version|failed or go_version.stdout != go_version_target
 
 - name: Add the Go bin directory to the PATH environment variable for all users
-  copy:
-    src: go-bin.sh
+  template:
+    src: go-bin.sh.j2
     dest: /etc/profile.d
   become: yes
 
 - name: Set GOPATH for all users
-  copy:
-    src: go-path.sh
+  template:
+    src: go-path.sh.j2
     dest: /etc/profile.d
   when: set_go_path
   become: yes
@@ -48,5 +48,5 @@
     state: present
     regexp: "secure_path="
     insertafter: EOF
-    line: 'Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:/usr/local/go/bin"'
+    line: 'Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:{{ set_go_path_args.go_bin }}"'
   become: yes
